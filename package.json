@@ -6,11 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD
-    "start": "node index.js"
-=======
     "start": "node --env-file=.env index.js"
->>>>>>> bd2da99899dd74910752bfc4d977a2a352625e55
   },
   "keywords": [],
   "author": "",
@@ -27,10 +23,6 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.7",
     "path": "^0.12.7"
-<<<<<<< HEAD
   },
   "proxy": "http://localhost:5000"
-=======
-  }
->>>>>>> bd2da99899dd74910752bfc4d977a2a352625e55
 }

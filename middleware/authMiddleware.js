@@ -1,36 +1,3 @@
-<<<<<<< HEAD
-import jwt from 'jsonwebtoken'
-import User from '../models/User.js';
- 
-const verifyUser = async (req, res, next) => {
-    try {
-        const token = req.headers.authorization.split(' ')[1];
-        if(!token) {
-            return res.status(404).json({success: false, error: "Token Not Provided"})
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_KEY)
-        if(!decoded) {
-            return res.status(404).json({success: false, error: "Token Not Valid"})
-        }
-
-        const user = await User.findById({_id: decoded._id}).select('-password')
-
-        if(!user) {
-            return res.status(404).json({success: false, error: "User not found"})
-        }
-
-        req.user = user
-        next()
-    } catch(error) {
-        console.log(error.message)
-        return res.status(500).json({success: false, error: "server error"+error})
-    }
-}
-
-export default verifyUser
-=======
-import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
@@ -45,6 +12,10 @@ const authMiddleware = async (req, res, next) => {
     let decoded;
     try {
       // Verify the token using the secret key from environment variables
+      if (!process.env.JWT_KEY) {
+        console.error("JWT_KEY is not defined in the environment variables.");
+        return res.status(500).json({ success: false, error: 'Server misconfiguration. JWT_KEY is missing.' });
+      }
       decoded = jwt.verify(token, process.env.JWT_KEY);
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
@@ -61,6 +32,12 @@ const authMiddleware = async (req, res, next) => {
     }
 
     req.user = user; // Attach user data to the request object
+
+    // Optional: Role-based access control (RBAC)
+    if (req.role && req.role !== user.role) {
+      return res.status(403).json({ success: false, error: 'Permission denied' });
+    }
+
     next(); // Proceed to the next middleware or route handler
   } catch (error) {
     console.error("Auth Middleware Error:", error.stack || error.message); // Log full error for debugging
@@ -69,4 +46,3 @@ const authMiddleware = async (req, res, next) => {
 };
 
 export default authMiddleware;
->>>>>>> bd2da99899dd74910752bfc4d977a2a352625e55
